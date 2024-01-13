@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script>
+    function Deletedone(){
+        console.log("delete done");
+        alert("deleted");
+        //delete the right todo from the list
+        //you will need to give each todo an id,and that should enough to check it
+   
+    }
+
+    //function for deleting the existing todo
+    function deletetodo(id){
+        fetch("http://localhost:3000/todos/"+id,{
+    method:"DELETE",
+    headers:{
+           "Content-Type":   "application/json"
+    }
+   }).then(Deletedone)
+}
+    
+    function todosCallback(data){
+
+         var parentElement=document.getElementById("main-area");
+         //parentElement.innerHTML=JSON.stringify(data);
+  for(var i=0;i<data.length;i++){
+
+  
+         var childElement=document.createElement("div");
+
+         var grandchildElement1=document.createElement("span"); 
+         grandchildElement1.innerHTML=data[i].title
+
+         var grandchildElement2=document.createElement("span"); 
+         grandchildElement2.innerHTML=data[i].description
+
+         var grandchildElement3=document.createElement("button"); 
+         grandchildElement3.innerHTML="Delete"
+//setting delete button functioning here!
+grandchildElement3.setAttribute("onclick", "deletetodo("+data[i].id+")")
+
+         childElement.appendChild(grandchildElement1)
+         childElement.appendChild(grandchildElement2)
+         childElement.appendChild(grandchildElement3)
+  
+        parentElement.appendChild(childElement);
+       }     }
+    function getdatacallback2(resp){
+ resp.json().then(todosCallback)
+    }
+    function getdata(){
+        fetch("http://localhost:3000/todos",{
+    method:"GET",
+        }).then(getdatacallback2)
+    }
+
+getdata();
+ 
+function parsedResponse(data){
+    console.log(data);
+    var parentElement=document.getElementById("main-area");
+
+    var childElement=document.createElement("div");
+
+         var grandchildElement1=document.createElement("span"); 
+         grandchildElement1.innerHTML=data.title
+
+         var grandchildElement2=document.createElement("span"); 
+         grandchildElement2.innerHTML=data.description
+
+         var grandchildElement3=document.createElement("button"); 
+         grandchildElement3.innerHTML="Delete"
+
+    
+         childElement.appendChild(grandchildElement1)
+         childElement.appendChild(grandchildElement2)
+         childElement.appendChild(grandchildElement3)
+  
+        parentElement.appendChild(childElement);
+       }     
+
+
+function callback(resp){
+        resp.json(parsedResponse);
+    }
+
+function onPress(){
+var title=document.getElementById("title").value;
+var description=document.getElementById("description").value;
+
+    fetch("http://localhost:3000/todos",{
+    method:"POST",
+    body:JSON.stringify({
+        title:title,
+        description:description
+    }),
+    headers:{
+           "Content-Type":   "application/json"
+    }
+   }).then(callback)
+}
+</script>
+<body>
+    Todo Title
+    <input type="text" id="title"></input><br>
+    <br>
+    Todo Description
+    <input type="text" id="description"></input>
+   <br> <button onclick="onPress()">send Todo</button>
+   <div id="main-area">
+    hi theree
+   </div>
+</body>
+</html>
